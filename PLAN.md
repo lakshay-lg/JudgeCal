@@ -27,16 +27,24 @@ as "judges are at human level."
 Two problems with that reading:
 
 1. **Raw agreement doesn't correct for chance.** On a near-binary decision,
-   much of the agreement would happen by chance anyway. A re-analysis reports
-   Krippendorff's α ≈ 0.478 for human–human agreement on the same data, against
-   raw agreement of 0.827. *(TODO: pin the exact citation, and reproduce this
-   number in Week 0 before relying on it.)*
-2. **The headline number depends on how ties are handled.** As far as I recall
-   the paper, the 85%/81% figures are for the setting *without ties*. With ties
-   counted as a third option, both numbers drop sharply (to roughly the
-   mid-60s). Verify this against the paper in Week 0. If it holds, part of the
-   "inflation" is a tie-handling choice, not only a chance-correction issue,
-   and the write-up has to separate the two.
+   much of the agreement would happen by chance anyway. Haldar & Hockenmaier
+   (2025, *Rating Roulette*, Findings of EMNLP, arXiv:2510.27106) report
+   Krippendorff's α = 0.478 for human–human agreement on the same data, against
+   raw agreement of 0.827.
+2. **The headline number depends on how ties are handled.** The 85%/81%
+   figures are for the setting *without ties*. With ties, they are 66%/63%
+   (Zheng et al., Table 5, first turn).
+
+**Week 0 audit results** ([`docs/week0-audit.md`](docs/week0-audit.md)):
+all of these numbers reproduce exactly from the public data, and the audit
+found two things that sharpen the story:
+- The 0.478 vs 0.827 contrast mixes tie policies. Like for like, chance
+  correction costs about 0.17–0.19 (with ties: 0.671 → 0.485; without ties:
+  0.828 → 0.653), and tie policy moves α by a further 0.17.
+- "GPT-4 85% > humans 81%" is partly a selection effect. The no-ties setting
+  lets GPT-4 abstain on 17% of the human signal, concentrated on hard items
+  (human agreement there is 70%, against 85% elsewhere). On the items where
+  GPT-4 committed, humans and GPT-4 agree equally (85.0% vs 85.6%).
 
 **Research question:** once chance correction, tie policy, and a fair
 comparison against a human ceiling are all handled, how reliable are current
@@ -69,9 +77,12 @@ Rules:
 ### 2.3 Fix the tie policy before computing anything
 Tie handling changes κ and α a lot. It gets decided in Week 0 and written into
 the pre-registration:
-- **Primary:** two-class (ties dropped), to match the setting the headline
-  claim was made in.
-- **Secondary:** three-class (A / B / tie), reported in full.
+- Report **both** two-class (ties dropped, the setting of the headline
+  claim) and three-class (A / B / tie) in full.
+- Every judge is run in **forced-choice** and **tie-allowed** modes. The audit
+  shows that letting a judge abstain via "tie" inflates its two-class
+  agreement (selection effect), so forced choice is needed for a fair
+  comparison.
 - Judge outputs that pick "tie" in the two-class setting are counted and
   reported, not silently thrown away.
 
@@ -118,10 +129,12 @@ From day one:
 - About 3.3K expert pairwise votes over 80 questions and 6 models (GPT-4,
   GPT-3.5, Claude-v1, Vicuna-13B, Alpaca-13B, LLaMA-13B), plus the original
   GPT-4 judge verdicts.
-- **Week 0 gate:** count how many comparisons have **two or more independent
-  human votes**. Only those support a human–human ceiling. If that set is too
-  small for useful CIs (see the power analysis), switch the primary dataset
-  before going any further.
+- **Week 0 gate: passed.** 960 comparisons have two or more independent
+  human votes (699 without ties), covering all 80 questions, which gives a
+  human–human α CI of about ±0.05.
+- **Gotcha:** annotators saw pairs in different presentation orders, so the
+  raw `model_a`/`winner` columns are inconsistent within 582 comparisons.
+  Always canonicalise the model order before grouping (see the audit).
 
 ### 3.2 Known validity threats (stated up front in the write-up)
 - **Age:** the responses come from 2023-era models, and their failure modes
@@ -339,9 +352,10 @@ tests/           # metric correctness tests against known values
 
 - [ ] API budget and GPU access (§7)
 - [ ] Final judge panel (§4)
-- [ ] Primary dataset confirmed after the multi-annotator count (§3.1)
+- [x] Primary dataset confirmed after the multi-annotator count (§3.1)
 - [ ] Second dataset chosen and licence checked (§3.3)
-- [ ] Exact citation for the α = 0.478 re-analysis (§1)
+- [x] Exact citation for the α = 0.478 re-analysis (§1)
+- [ ] Pre-registration decisions: proposals in `docs/week0-audit.md`
 
 ---
 
