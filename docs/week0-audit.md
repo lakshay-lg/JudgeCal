@@ -185,7 +185,7 @@ directly rather than bounded.
 |---|---|---|
 | Primary dataset | MT-Bench human judgments | Gate passed |
 | Item definition | (question, model pair in canonical order, turn) | Raw grouping silently splits 199 comparisons |
-| Annotator pool | **All humans (experts + authors)** as primary; experts-only as sensitivity check | +226 multi-vote items; α differs by only 0.02 |
+| Annotator pool | **All humans (experts + authors)** as primary; experts-only as sensitivity check. **Accepted.** | +226 multi-vote items; α differs by only 0.02 |
 | Tie policy | Report **both**. Primary for the "inflation" story: with ties, since it's the stricter and more realistic setting | The 0.478/0.827 contrast mixes the two policies |
 | Human–human agreement definition | Pooled pairs (paper-compatible) as primary; per-item mean reported alongside | Reproduces Zheng et al. exactly |
 | Judge modes | Run every judge **forced-choice and tie-allowed** | Measures the S2 selection effect directly |
